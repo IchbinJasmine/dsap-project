@@ -27,14 +27,15 @@
 - Week 15 (Final)： 錄製 Demo 影片並完成最終報告手稿。
 
 ### 與課程的關聯
-1. Priority Queue / Max-Heap (優先權佇列 / 最大堆積)：
+1. Priority Queue / Max-Heap (優先權佇列 / 最大堆積)：  
    這是本專題的核心。我們不需要對所有任務進行全排序（$O(N \log N)$），我們只需要隨時知道「最高優先權」的任務是什麼。
    使用 Max-Heap 可以讓取出最高優先權任務的時間複雜度達到 $O(1)$，新增任務也僅需 $O(\log N)$。這在處理大量動態變動的任務時，效能遠優於一般的 Array。
-2. Hash Table (雜湊表 / Python Dictionary)：
+2. Hash Table (雜湊表 / Python Dictionary)：  
    為了實現任務的快速查找。當使用者想要修改某個特定任務（例如：將「期末專題」標記為完成）時，透過 Hash Table 可以將任務名稱或 ID 直接對應到其在記憶體中的位址，達到 $O(1)$ 的查詢效率，避免線性搜尋。
-4. Weighted Scoring Algorithm (加權評分演算法)：
+4. Weighted Scoring Algorithm (加權評分演算法)：  
    透過這門課學到的邏輯思考，設計一個合理的公式來平衡「重要性」與「緊急性」。例如，針對接近 Deadline 的任務給予非線性的權重加成，這體現了「進階程式設計」中對於邏輯處理的深度。
-6. 2D Array / List of Lists (二維陣列)：為什麼： 在進行「四象限」視覺化分類輸出時，使用二維空間的概念來儲存各象限的任務清單，方便程式進行區域性的巡訪與列印。
+6. 2D Array / List of Lists (二維陣列)：
+   在進行「四象限」視覺化分類輸出時，使用二維空間的概念來儲存各象限的任務清單，方便程式進行區域性的巡訪與列印。
 ---
 
 ## Prototype Report
