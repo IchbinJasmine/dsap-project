@@ -3,7 +3,7 @@
     "id": "9144af",
     "name": "做簡報",
     "importance": 5.0,
-    "urgency": 9.849216392636219,
+    "urgency": 9.851676488044872,
     "deadline": "2026-04-27T00:00:00",
     "created_at": "2026-04-25T18:45:52.710883"
   },
@@ -14,5 +14,13 @@
     "urgency": 3.0,
     "deadline": null,
     "created_at": "2026-04-25T18:46:05.681654"
+  },
+  {
+    "id": "f293fd",
+    "name": "看書",
+    "importance": 3.0,
+    "urgency": 3.0,
+    "deadline": null,
+    "created_at": "2026-04-25T18:51:25.394045"
   }
 ]

@@ -68,6 +68,10 @@ class MaxHeap:
         self.heap = []
         self.pos_map = {} # Hash Table: task_id -> index 達成 O(1) 尋址
 
+    def peek_max(self):
+        """O(1) 取得當前最高優先任務但不移除"""
+        return self.heap[0] if self.heap else None
+
     def _swap(self, i, j):
         self.heap[i], self.heap[j] = self.heap[j], self.heap[i]
         self.pos_map[self.heap[i].id] = i
@@ -120,6 +124,33 @@ class MaxHeap:
             
         return max_task
 
+    def remove_by_id(self, task_id):
+        """O(log N) 依任務 ID 刪除指定任務"""
+        idx = self.pos_map.get(task_id)
+        if idx is None:
+            return None
+
+        removed_task = self.heap[idx]
+        last_idx = len(self.heap) - 1
+
+        if idx == last_idx:
+            self.heap.pop()
+            del self.pos_map[removed_task.id]
+            return removed_task
+
+        last_task = self.heap.pop()
+        del self.pos_map[removed_task.id]
+        self.heap[idx] = last_task
+        self.pos_map[last_task.id] = idx
+
+        parent = (idx - 1) // 2
+        if idx > 0 and self.heap[idx].get_score() > self.heap[parent].get_score():
+            self._sift_up(idx)
+        else:
+            self._sift_down(idx)
+
+        return removed_task
+
     def refresh(self):
         """
         因時間推移導致 Aging 與 Deadline 分數變動，觸發全域重構。
@@ -137,6 +168,7 @@ class EisenhowerEngineCLI(cmd.Cmd):
         super().__init__()
         self.heap = MaxHeap()
         self.data_file = Path(__file__).with_name('tasks_data.json')
+        self.current_task_id = None
 
     def do_add(self, arg):
         """
@@ -168,14 +200,37 @@ class EisenhowerEngineCLI(cmd.Cmd):
             print("❌ 日期格式請使用 YYYY-MM-DD，或確保重要度/緊急度為數字。")
 
     def do_next(self, arg):
-        """O(1) 提取當下最高優先權的任務"""
-        # 提取前先更新一次老化狀態以確保精準
-        self.heap.refresh() 
-        task = self.heap.extract_max()
+        """O(1) 查看當下最高優先權任務（不刪除）"""
+        # 查看前先更新一次老化狀態以確保精準
+        self.heap.refresh()
+        task = self.heap.peek_max()
         if not task:
+            self.current_task_id = None
             print("🎉 當前無待辦任務！")
         else:
+            self.current_task_id = task.id
             print(f"🔥 [最高優先執行] {task.name} (ID: {task.id}) | 綜合權重: {task.get_score():.2f}")
+            print("✅ 完成後請輸入 done 來刪除這個任務。")
+
+    def do_done(self, arg):
+        """完成目前任務並刪除（需先使用 next 指定）"""
+        if not self.heap.heap:
+            self.current_task_id = None
+            print("🎉 當前無待辦任務！")
+            return
+
+        if not self.current_task_id:
+            print("⚠️ 尚未指定目前任務，請先輸入 next。")
+            return
+
+        removed = self.heap.remove_by_id(self.current_task_id)
+        if not removed:
+            self.current_task_id = None
+            print("⚠️ 目前任務不存在，請重新輸入 next。")
+            return
+
+        print(f"✅ 已完成並刪除任務：{removed.name} (ID: {removed.id})")
+        self.current_task_id = None
 
     def do_list(self, arg):
         """列出當前所有任務 (會先觸發權重更新)"""
