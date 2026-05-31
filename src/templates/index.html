@@ -511,10 +511,189 @@ header {
 }
 #toast.show { transform: translateX(-50%) translateY(0); }
 
+/* ── View Switcher ── */
+.view-switcher {
+  display: inline-flex;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+.view-switcher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .3rem .8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  background: transparent;
+  transition: background .15s, color .15s, box-shadow .15s;
+  white-space: nowrap;
+}
+.view-switcher-btn.active {
+  background: var(--surface);
+  color: var(--primary);
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
+}
+
+/* ── Heap / Matrix 可見性控制 ── */
+#heap-view   { display: block; }
+#matrix-view { display: none;  }
+#heap-view.hidden    { display: none;  }
+#matrix-view.visible { display: block; }
+
+/* ── Matrix Grid: 2×2 均等分布 ── */
+.matrix-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  min-height: 420px;
+}
+
+.quadrant {
+  border-radius: 10px;
+  padding: .85rem .9rem;
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid transparent;
+  min-height: 200px;
+}
+
+/* Q1 — 紅橘色系（重要且緊急） */
+.q1 { background: #fef2f2; border-color: #fecaca; }
+.q1 .q-header { color: #991b1b; }
+.q1 .q-badge  { background: #fee2e2; color: #991b1b; }
+.q1 .q-task-item:hover { background: #fee2e2; }
+
+/* Q2 — 藍靛色系（重要不緊急） */
+.q2 { background: #eff6ff; border-color: #bfdbfe; }
+.q2 .q-header { color: #1e40af; }
+.q2 .q-badge  { background: #dbeafe; color: #1e40af; }
+.q2 .q-task-item:hover { background: #dbeafe; }
+
+/* Q3 — 琥珀黃色系（不重要但緊急） */
+.q3 { background: #fffbeb; border-color: #fde68a; }
+.q3 .q-header { color: #92400e; }
+.q3 .q-badge  { background: #fef3c7; color: #92400e; }
+.q3 .q-task-item:hover { background: #fef3c7; }
+
+/* Q4 — 灰色系（不重要不緊急） */
+.q4 { background: #f8fafc; border-color: #e2e8f0; }
+.q4 .q-header { color: #475569; }
+.q4 .q-badge  { background: #e2e8f0; color: #475569; }
+.q4 .q-task-item:hover { background: #e2e8f0; }
+
+.q-title-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .2rem;
+}
+.q-header {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+.q-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: .55rem;
+}
+.q-badge {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 99px;
+  flex-shrink: 0;
+}
+.q-divider {
+  height: 1px;
+  background: #94a3b8;
+  opacity: .2;
+  margin-bottom: .5rem;
+}
+
+/* 象限內任務清單：支援垂直捲動，防止象限無限撐高 */
+.q-task-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+.q-task-list::-webkit-scrollbar { width: 4px; }
+.q-task-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+.q-task-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .3rem .45rem;
+  border-radius: 5px;
+  gap: .4rem;
+  transition: background .1s;
+}
+.q-task-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0; /* 讓 flex child 能正確截斷文字 */
+}
+.q-task-score {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.q-task-urgency-badge {
+  font-size: 9.5px;
+  padding: 1px 5px;
+  border-radius: 99px;
+  background: rgba(0,0,0,.07);
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.q-empty {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 1.5rem 0;
+  opacity: .7;
+}
+
+/* 矩陣視圖底部圖例說明列 */
+.matrix-legend {
+  display: flex;
+  gap: .65rem;
+  flex-wrap: wrap;
+  font-size: 10.5px;
+  color: var(--text-muted);
+  margin-top: .75rem;
+  padding: .45rem .7rem;
+  background: var(--bg);
+  border-radius: 7px;
+  align-items: center;
+}
+.matrix-legend strong { color: var(--text); }
+
 /* ── Responsiveness ── */
 @media (max-width: 900px) {
   #main-layout { grid-template-columns: 1fr; }
   #main-layout.viz-hidden { grid-template-columns: 1fr; }
+  .matrix-grid { grid-template-columns: 1fr; min-height: unset; }
 }
 </style>
 </head>
@@ -605,47 +784,132 @@ header {
   <!-- ── Right: Viz Panel ── -->
   <div class="viz-panel" id="viz-panel">
     <div class="card" style="margin-bottom:0">
+
+      <!-- 視角切換器：狀態由 currentView 控制渲染哪個元件 -->
       <div class="viz-header">
-        <div class="card-title" style="margin-bottom:0">🌳 Heap 視覺化</div>
+        <div class="view-switcher">
+          <button class="view-switcher-btn active" id="btn-view-heap">🌳 Heap 視角</button>
+          <button class="view-switcher-btn" id="btn-view-matrix">▦ 矩陣視角</button>
+        </div>
         <span class="op-badge" id="op-badge">待機</span>
         <span class="step-counter" id="step-counter"></span>
       </div>
 
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot l-root"></div>根節點</div>
-        <div class="legend-item"><div class="legend-dot l-normal"></div>一般節點</div>
-        <div class="legend-item"><div class="legend-dot l-compare"></div>比較中</div>
-        <div class="legend-item"><div class="legend-dot l-swap"></div>交換中</div>
-      </div>
-
-      <!-- SVG tree -->
-      <div class="svg-wrap">
-        <svg id="heapSvg" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet">
-          <text x="450" y="190" class="svg-empty">空 Heap — 新增任務後將顯示樹狀結構</text>
-        </svg>
-      </div>
-
-      <!-- Array view -->
-      <div class="array-label">底層陣列 (Heap Array)</div>
-      <div id="array-view"></div>
-
-      <!-- Step log -->
-      <div class="array-label">操作步驟紀錄</div>
-      <div id="step-log"><div class="log-entry">尚無操作...</div></div>
-
-      <!-- Anim controls -->
-      <div class="anim-controls">
-        <div class="speed-group">
-          <span>速度</span>
-          <input type="range" id="anim-speed" min="200" max="1800" value="900" step="100">
-          <span class="speed-val" id="speed-val">1×</span>
+      <!-- ══════════════════════════════════ -->
+      <!-- Heap View（預設顯示）              -->
+      <!-- ══════════════════════════════════ -->
+      <div id="heap-view">
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot l-root"></div>根節點</div>
+          <div class="legend-item"><div class="legend-dot l-normal"></div>一般節點</div>
+          <div class="legend-item"><div class="legend-dot l-compare"></div>比較中</div>
+          <div class="legend-item"><div class="legend-dot l-swap"></div>交換中</div>
         </div>
-        <button class="btn btn-ghost btn-sm" id="btn-prev" disabled>◀</button>
-        <button class="btn btn-ghost btn-sm" id="btn-next-step" disabled>▶</button>
-        <button class="btn btn-ghost btn-sm" id="btn-replay" disabled>↺ 重播</button>
+
+        <!-- SVG 樹狀圖 -->
+        <div class="svg-wrap">
+          <svg id="heapSvg" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet">
+            <text x="450" y="190" class="svg-empty">空 Heap — 新增任務後將顯示樹狀結構</text>
+          </svg>
+        </div>
+
+        <!-- 底層陣列展示 -->
+        <div class="array-label">底層陣列 (Heap Array)</div>
+        <div id="array-view"></div>
+
+        <!-- 操作步驟紀錄 -->
+        <div class="array-label">操作步驟紀錄</div>
+        <div id="step-log"><div class="log-entry">尚無操作...</div></div>
+
+        <!-- 動畫控制列 -->
+        <div class="anim-controls">
+          <div class="speed-group">
+            <span>速度</span>
+            <input type="range" id="anim-speed" min="200" max="1800" value="900" step="100">
+            <span class="speed-val" id="speed-val">1×</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" id="btn-prev" disabled>◀</button>
+          <button class="btn btn-ghost btn-sm" id="btn-next-step" disabled>▶</button>
+          <button class="btn btn-ghost btn-sm" id="btn-replay" disabled>↺ 重播</button>
+        </div>
       </div>
-    </div>
-  </div>
+
+      <!-- ══════════════════════════════════ -->
+      <!-- Matrix View（預設隱藏）            -->
+      <!-- ══════════════════════════════════ -->
+      <div id="matrix-view">
+
+        <!-- 2×2 CSS Grid：四個象限均等分布 -->
+        <div class="matrix-grid">
+
+          <!-- Q1：重要且緊急 ── Do First -->
+          <div class="quadrant q1">
+            <div class="q-title-row">
+              <span class="q-header">Q1 立即執行</span>
+              <span class="q-badge" id="q1-count">0</span>
+            </div>
+            <div class="q-subtitle">重要 &amp; 緊急 — Do First 🔥</div>
+            <div class="q-divider"></div>
+            <!-- 任務清單支援 overflow-y-auto，防止過多任務撐破版面 -->
+            <div class="q-task-list" id="q1-list">
+              <div class="q-empty">暫無任務</div>
+            </div>
+          </div>
+
+          <!-- Q2：重要不緊急 ── Schedule -->
+          <div class="quadrant q2">
+            <div class="q-title-row">
+              <span class="q-header">Q2 排程規劃</span>
+              <span class="q-badge" id="q2-count">0</span>
+            </div>
+            <div class="q-subtitle">重要 &amp; 不緊急 — Schedule 📅</div>
+            <div class="q-divider"></div>
+            <div class="q-task-list" id="q2-list">
+              <div class="q-empty">暫無任務</div>
+            </div>
+          </div>
+
+          <!-- Q3：不重要但緊急 ── Delegate -->
+          <div class="quadrant q3">
+            <div class="q-title-row">
+              <span class="q-header">Q3 委派他人</span>
+              <span class="q-badge" id="q3-count">0</span>
+            </div>
+            <div class="q-subtitle">不重要 &amp; 緊急 — Delegate 📤</div>
+            <div class="q-divider"></div>
+            <div class="q-task-list" id="q3-list">
+              <div class="q-empty">暫無任務</div>
+            </div>
+          </div>
+
+          <!-- Q4：不重要不緊急 ── Eliminate -->
+          <div class="quadrant q4">
+            <div class="q-title-row">
+              <span class="q-header">Q4 考慮刪除</span>
+              <span class="q-badge" id="q4-count">0</span>
+            </div>
+            <div class="q-subtitle">不重要 &amp; 不緊急 — Eliminate 🗑</div>
+            <div class="q-divider"></div>
+            <div class="q-task-list" id="q4-list">
+              <div class="q-empty">暫無任務</div>
+            </div>
+          </div>
+
+        </div><!-- /.matrix-grid -->
+
+        <!-- 底部說明：閾值與象限定義 -->
+        <div class="matrix-legend">
+          <span>閾值：<strong>重要度 ≥ 5</strong> &amp; <strong>緊急度 ≥ 5</strong></span>
+          <span>🔴 Q1 重要+緊急</span>
+          <span>🔵 Q2 重要+不緊急</span>
+          <span>🟡 Q3 不重要+緊急</span>
+          <span>⚫ Q4 不重要+不緊急</span>
+        </div>
+
+      </div><!-- /#matrix-view -->
+
+    </div><!-- /.card -->
+  </div><!-- /#viz-panel -->
 </div>
 
 <div id="toast"></div>
@@ -663,6 +927,9 @@ const state = {
   currentTaskId: null,
   maxScore: 1,
 };
+
+// 視角狀態：'heap' | 'matrix'，控制右側面板渲染哪個元件
+let currentView = 'heap';
 
 // ── Heap SVG persistent state ──
 let nodeMap = {};        // taskId -> <g> element
@@ -1033,15 +1300,24 @@ $('btn-replay').addEventListener('click', () => {
 // ── Load all tasks ──
 async function loadTasks() {
   const data = await api('GET', '/api/tasks');
+  // 左側任務清單永遠同步更新
   renderTaskList(data.tasks);
-  if (data.heap.length) {
-    renderHeap(data.heap);
-    if (!state.steps.length) {
-      buildStepLog([]);
-      stepLog.innerHTML = '<div class="log-entry">載入完成 — 執行操作後將顯示步驟。</div>';
-    }
+
+  // 右側視覺化：依當前視角決定渲染目標
+  if (currentView === 'matrix') {
+    // 矩陣視角：用最新資料重新分類並刷新四象限
+    renderMatrixView(data.tasks);
   } else {
-    renderHeap([]);
+    // Heap 視角：渲染或清空 SVG 樹狀圖
+    if (data.heap.length) {
+      renderHeap(data.heap);
+      if (!state.steps.length) {
+        buildStepLog([]);
+        stepLog.innerHTML = '<div class="log-entry">載入完成 — 執行操作後將顯示步驟。</div>';
+      }
+    } else {
+      renderHeap([]);
+    }
   }
 }
 
@@ -1130,6 +1406,119 @@ async function deleteTask(id) {
   }
   if (state.vizEnabled) playSteps(data.steps, 'REMOVE');
   loadTasks();
+}
+
+// ══════════════════════════════════════════════════════
+// 視角切換器 (View Switcher)
+// ══════════════════════════════════════════════════════
+
+/**
+ * 切換至 Heap 樹狀視角。
+ * 隱藏 #matrix-view，顯示 #heap-view，並同步按鈕的 active 狀態。
+ */
+function switchToHeap() {
+  currentView = 'heap';
+  $('heap-view').classList.remove('hidden');
+  $('matrix-view').classList.remove('visible');
+  $('btn-view-heap').classList.add('active');
+  $('btn-view-matrix').classList.remove('active');
+  // 切回 heap 時補一次渲染，確保動畫狀態一致
+  opBadge.style.display = '';
+  stepCounter.style.display = '';
+}
+
+/**
+ * 切換至矩陣視角。
+ * 隱藏 #heap-view，顯示 #matrix-view，並立即抓取最新任務資料重新分類。
+ */
+async function switchToMatrix() {
+  currentView = 'matrix';
+  $('heap-view').classList.add('hidden');
+  $('matrix-view').classList.add('visible');
+  $('btn-view-heap').classList.remove('active');
+  $('btn-view-matrix').classList.add('active');
+  // op-badge 與 step-counter 不適用於矩陣視角，暫時隱藏
+  opBadge.style.display = 'none';
+  stepCounter.style.display = 'none';
+  // 即時拉取最新資料並渲染矩陣
+  const data = await api('GET', '/api/tasks');
+  renderMatrixView(data.tasks);
+}
+
+$('btn-view-heap').addEventListener('click', switchToHeap);
+$('btn-view-matrix').addEventListener('click', switchToMatrix);
+
+// ══════════════════════════════════════════════════════
+// 四象限視覺化元件 (Matrix View Component)
+// ══════════════════════════════════════════════════════
+
+const MATRIX_THRESHOLD = 5.0; // 重要度 & 緊急度的分水嶺
+
+/**
+ * 主渲染函式：將 tasks 陣列分類至四個象限並更新 DOM。
+ *
+ * 資料分類邏輯：
+ *   - API 回傳的 urgency 欄位已由後端動態計算（含 deadline 線性轉換）
+ *   - 因此前端直接使用 t.urgency 即可，不需要重新計算
+ *   - 分類後各象限依 score 降序排列，讓高優先任務排在最前面
+ *
+ * @param {Array} tasks - /api/tasks 回傳的 tasks 陣列
+ */
+function renderMatrixView(tasks) {
+  // 初始化四個象限的任務暫存陣列
+  const q = { q1: [], q2: [], q3: [], q4: [] };
+
+  tasks.forEach(t => {
+    const isImportant = t.importance >= MATRIX_THRESHOLD;
+    const isUrgent    = t.urgency    >= MATRIX_THRESHOLD;
+
+    // 依重要度（y 軸）與緊急度（x 軸）分類
+    if      (isImportant &&  isUrgent)  q.q1.push(t); // Q1: 立即執行
+    else if (isImportant && !isUrgent)  q.q2.push(t); // Q2: 排程規劃
+    else if (!isImportant &&  isUrgent) q.q3.push(t); // Q3: 委派他人
+    else                                 q.q4.push(t); // Q4: 考慮刪除
+  });
+
+  // 各象限內部依綜合權重降序排列，讓最優先的任務浮到最上方
+  Object.values(q).forEach(arr => arr.sort((a, b) => b.score - a.score));
+
+  renderQuadrant('q1', q.q1);
+  renderQuadrant('q2', q.q2);
+  renderQuadrant('q3', q.q3);
+  renderQuadrant('q4', q.q4);
+}
+
+/**
+ * 渲染單一象限的任務清單。
+ *
+ * @param {string} qId   - 'q1' | 'q2' | 'q3' | 'q4'
+ * @param {Array}  tasks - 該象限的任務陣列（已排序）
+ */
+function renderQuadrant(qId, tasks) {
+  // 更新任務數量 badge
+  const badge = $(`${qId}-count`);
+  if (badge) badge.textContent = tasks.length;
+
+  const list = $(`${qId}-list`);
+  if (!list) return;
+
+  if (!tasks.length) {
+    list.innerHTML = '<div class="q-empty">暫無任務</div>';
+    return;
+  }
+
+  // 每筆任務渲染為卡片列：名稱 + 緊急度標籤 + 綜合權重分數
+  list.innerHTML = tasks.map(t => {
+    const urgencyLabel = t.has_deadline
+      ? `<span class="q-task-urgency-badge">⏰ DL</span>`
+      : `<span class="q-task-urgency-badge">U${t.urgency.toFixed(1)}</span>`;
+    return `
+      <div class="q-task-item">
+        <span class="q-task-name" title="${t.name}">${t.name}</span>
+        ${urgencyLabel}
+        <span class="q-task-score">${t.score.toFixed(1)}</span>
+      </div>`;
+  }).join('');
 }
 
 // ── Save / Load ──
