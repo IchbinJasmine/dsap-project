@@ -112,10 +112,105 @@ Proposal 中未規劃，因考量視覺化需求而額外開發：
 ## Final Report
 
 ### 專案說明
-<!-- 完整描述你的專案做了什麼 -->
+
+本專題實作一套以 **Max-Heap** 為核心的任務優先權決策引擎，結合艾森豪矩陣的分類框架，協助使用者在眾多待辦事項中自動找出「當下最應執行的任務」。
+
+#### 核心資料結構
+
+| 元件 | 說明 |
+|------|------|
+| `MaxHeap` | 以陣列實作的最大堆積，維護任務依優先度的隱式排序。Insert / Extract-Max / Remove-by-ID 均為 O(log N)，Peek-Max 為 O(1) |
+| `pos_map`（Hash Table） | `task_id → heap array index` 的映射表，讓 `remove_by_id` 與 `update_task` 能以 O(1) 定位目標節點，跳過 O(N) 線性掃描 |
+
+#### 評分公式
+
+```
+score = 重要度 × 1.5 + 緊急度 + 老化加成
+老化加成 = 任務存活天數 × 0.5
+```
+
+- **Deadline 轉換**：截止日期線性對應緊急度（14 天以上 → 1 分，24 小時內 → 10 分，已逾期 → 10 分）
+- **Aging 機制**：每天 +0.5 分，防止低優先任務永遠排不到（Starvation）
+
+#### 功能總覽
+
+**CLI（`src/app.py`）**
+
+| 指令 | 功能 | 時間複雜度 |
+|------|------|-----------|
+| `add <名稱> <重要度> <緊急度/日期>` | 新增任務並插入 Heap | O(log N) |
+| `next` | 查看當前最高優先任務（不刪除） | O(1) |
+| `done` | 完成並刪除當前任務 | O(log N) |
+| `list` | 列出所有任務（觸發一次 O(N) refresh） | O(N) |
+| `edit <id> <重要度> <緊急度/日期>` | 就地更新任務屬性，自動 Sift-Up 或 Sift-Down | O(log N) |
+| `matrix` | 依閾值將任務分類至四象限，以文字矩陣輸出 | O(N) |
+| `save` / `load` | JSON 資料持久化 | O(N) |
+
+**Web UI（`src/web_app.py`）**
+
+- Flask REST API，將所有核心操作包裝為 JSON 介面
+- 任務清單即時顯示重要度、緊急度（Deadline 任務標記 ⏰）、綜合權重與進度條
+- **Heap 視覺化**：每次操作後逐步播放 Sift-Up / Sift-Down 的比較與交換，節點以 CSS `transform: translate()` 動畫滑移至新位置
+- **底層陣列對照**：與樹狀圖同步，呈現 Heap Array 的實際排列
+- **視角切換器**：右側面板可在「Heap 樹狀視角」與「艾森豪矩陣視角」之間切換
+- **四象限矩陣視覺化**：以 CSS Grid 2×2 版面分類顯示任務（Q1 紅、Q2 藍、Q3 黃、Q4 灰），支援象限內垂直捲動
+
+**效能測試（`src/benchmark.py`）**
+
+以 `time.perf_counter()` 計時，在四個資料量級（N = 100 / 1,000 / 10,000 / 100,000）下，比較「傳統 List 線性掃描 O(K·N)」與「Max-Heap O(K log N)」連續提取 100 次最高優先任務的耗時，並以 Matplotlib 折線圖輸出比較結果（`benchmark_result.png`）。
+
+---
 
 ### 使用方式
-<!-- 如何編譯、執行、使用你的程式 -->
 
-### 與課程的關聯總結
-<!-- 總結你的專題與進階程式設計及資料結構課程之間的關聯 -->
+#### 環境需求
+
+- Python 3.10 以上
+- 套件：`flask`、`matplotlib`（僅效能測試需要）
+
+```bash
+pip install flask matplotlib
+```
+
+#### 1. CLI 模式
+
+```bash
+cd dsap-project/src
+python app.py
+```
+
+進入互動式 shell 後，可輸入以下指令：
+
+```
+(Engine) > add 準備期末報告 9 8          # 新增任務（手動緊急度）
+(Engine) > add 繳交水電費 5 2025-07-15   # 新增任務（截止日期）
+(Engine) > list                          # 列出所有任務
+(Engine) > next                          # 查看最高優先任務
+(Engine) > edit <task_id> 9 2025-07-01  # 編輯任務（O(1) 定位 + O(log N) 調整）
+(Engine) > matrix                        # 四象限文字矩陣
+(Engine) > done                          # 完成並刪除當前任務
+(Engine) > save                          # 儲存為 tasks_data.json
+(Engine) > load                          # 從 tasks_data.json 載入
+(Engine) > exit                          # 自動儲存後離開
+```
+
+#### 2. Web UI 模式
+
+```bash
+cd dsap-project/src
+python web_app.py
+```
+
+開啟瀏覽器前往 `http://127.0.0.1:5001`，介面提供：
+- 左側：新增任務表單、下一個任務、完成任務、任務清單
+- 右側：可透過頂部切換器在「Heap 視角」（動畫樹狀圖）與「矩陣視角」（四象限分類）間切換
+
+#### 3. 效能測試
+
+```bash
+cd dsap-project/src
+python benchmark.py
+```
+
+測試完成後終端印出比較表格，並彈出折線圖視窗，同時將圖表存為 `src/benchmark_result.png`。
+
